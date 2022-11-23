@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[48]:
+# In[50]:
 
 
 import numpy as np
@@ -63,7 +63,7 @@ leg = plt.legend()
 plt.show()
 
 
-# In[4]:
+# In[39]:
 
 
 #2.(iii)
@@ -102,7 +102,7 @@ X_u = [0]*(N+1)
 
 Gf = lambda u: np.array([2*np.matmul(np.matmul(np.transpose(A),A),u)[i]-2*(np.matmul(np.transpose(A),b)[i])+δ/(umax-u[i])+γ*u[i] for i in range(N)])
 U = descent(1, u0, Gf)
-X_u[1:-1] = np.matmul(A, U)-b
+X_u[1:] = np.matmul(A, U)-b
 X_u[0] = x_bar
 
 import matplotlib.pyplot as plt
@@ -118,7 +118,7 @@ leg = plt.legend()
 plt.show()
 
 
-# In[40]:
+# In[48]:
 
 
 #2(iv) i)
@@ -175,15 +175,15 @@ def backtracking(α, β, s, u0, f, Gf):
         grad = Gf(u)
     return u
 
-#The columns of U conrrespond to the control signals for each value of γ
+#The columns of U1 conrrespond to the control signals for the configuration γ1 = 0.01, γ2 = 0
 U1 = [0]*N
-# X_u are the optimal trajectories:
+# X_u1 are the optimal trajectories for the configuration γ1 = 0.01, γ2 = 0:
 X_u1 = [0]*(N+1)
 
 f = lambda u: np.linalg.norm(np.matmul(A,u)-b)**2+γ2/2*np.linalg.norm(u)**2+γ1*L_ϵ(u)
 Gf = lambda u: np.array([2*np.matmul(np.matmul(np.transpose(A),A),u)[i]-2*(np.matmul(np.transpose(A),b)[i])+γ2*u[i]+γ1*GL_ϵ(u)[i] for i in range(N)])
-U1 = backtracking(0.5, 0.5, 1, u0, f, Gf)
-X_u1[1:] = np.matmul(A, U)- b
+U1 = backtracking(0.1, 0.1, 1, u0, f, Gf)
+X_u1[1:] = np.matmul(A, U1)- b
 X_u1[0] = x_bar
 
 import matplotlib.pyplot as plt
@@ -245,27 +245,27 @@ def backtracking(α, β, s, u0, f, Gf):
     u = u0
     G = np.linalg.norm(Gf(u))
     grad = Gf(u)
-    func = f(u)
     while G > ω :
         t = s
         d = - grad
         while (f(u)-f(u+t*d)+α*t*np.dot(Gf(u),d)) < 0:
             t = β*t
         u = u + t*d
-        func = f(u)
         G = np.linalg.norm(Gf(u))
         grad = Gf(u)
     return u
 
-#The columns of U conrrespond to the control signals for each value of γ
+#The columns of U correspond to the control signals for the configuration γ1 = 0.01, γ2 = 0
 U2 = [0]*N
-# X_u are the optimal trajectories:
-X_u2 = [0]*(N+1)
+# X_u are the optimal trajectories for the configuration γ1 = 0.01, γ2 = 0
+X_u2 = [1]*(N+1)
 
 f = lambda u: np.linalg.norm(np.matmul(A,u)-b)**2+γ2/2*np.linalg.norm(u)**2+γ1*L_ϵ(u)
 Gf = lambda u: np.array([2*np.matmul(np.matmul(np.transpose(A),A),u)[i]-2*(np.matmul(np.transpose(A),b)[i])+γ2*u[i]+γ1*GL_ϵ(u)[i] for i in range(N)])
+
 U2 = backtracking(0.1, 0.1, 1, u0, f, Gf)
-X_u2[1:] = np.matmul(A, U)-b
+
+X_u2[1:] = np.matmul(A, U2)-b
 X_u2[0] = x_bar
 
 import matplotlib.pyplot as plt
@@ -281,4 +281,10 @@ plt.plot(X_u1, label = 'γ1 = 0\nγ2 = '+str(10**(-2)), markersize = 1)
 plt.plot(X_u2, label = 'γ1 = '+str(10**(-2))+'\nγ2 = 0', markersize = 1)
 leg = plt.legend()
 plt.show()
+
+
+# In[ ]:
+
+
+
 
